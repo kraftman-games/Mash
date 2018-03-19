@@ -1,22 +1,31 @@
 
 
-local canvas = require('canvas')
+local world = require('world')
 local player = require('player')
+local comet = require('comet')
 local lg = love.graphics
 local controllers = {}
 local buttonListeners = {}
 
+
+-- ===============================
+DEBUG = true
+-- ===============================
+local newComet = comet:Create(world, 200, 200, 100)
+world:AddComet(newComet)
+
+
 local function RemoveController(controller)
     if controller.joystick:isConnected() == false then
         for k, player in pairs(controller.players) do
-            canvas:RemovePlayer(player)
-            for k,v in pairs(listenButtons) do
+            world:RemovePlayer(player)
+            for k,v in pairs(buttonListeners) do
                 if v == player then
-                    listenButtons[v] = nil
+                    buttonListeners[v] = nil
                 end
             end
         end
-        controller[k] = nil
+        controllers[controller.id] = nil
     end
 end
 
@@ -37,26 +46,24 @@ function love.update(dt)
     for id, controller in pairs(controllers) do
         RemoveController(controller)
     end
-    canvas:Update(dt)
+    world:Update(dt)
 end
 
 function AddPlayer(controller, playerID)
     print('creating player: ', playerID)
     local listenButtons = {}
-    listenButtons.player1 = {'leftstick',}
-    listenButtons.player2 = {'rightstick'}
+    listenButtons.player1 = {'leftstick', 'leftshoulder'}
+    listenButtons.player2 = {'rightstick', 'rightshoulder'}
 
     local lOrR = playerID == 'player1' and 'left' or 'right'
-    local player = player:Create(50, 50, controller.joystick, lOrR)
-    canvas:AddPlayer(player)
+    local player = player:Create(world, 50, 50, controller.joystick, lOrR)
+    world:AddPlayer(player)
     controller.players[playerID] = player
     for k, v in pairs(listenButtons[playerID]) do
         buttonListeners[controller.id..v] = player
     end
 
 end
-
-
 
 function love.gamepadpressed(joystick, button)
     AddController(joystick)
@@ -124,7 +131,7 @@ function love.gamepadaxis( joystick, axis, value )
 end
 
 function love.draw()
-    canvas:Draw()
+    world:Draw()
     
     local joysticks = love.joystick.getJoysticks()
     for i, joystick in ipairs(joysticks) do
