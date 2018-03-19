@@ -21,7 +21,6 @@ function M:RemoveOOB()
     for k,v in pairs(self.collidables) do
         if (v.x < - self.bufferWidth or v.x > self.width + self.bufferWidth) or
            (v.y < - self.bufferWidth or v.y > self.height + self.bufferWidth) then
-            print('removing')
             v:RemoveOOB()
         end
     end
@@ -36,7 +35,6 @@ function M:ResolveCollisions(dt)
             secondObject = self.collidables[j]
             secondCoords = secondObject:GetNewCoords(dt)
             if ObjectsCollide(firstObject, secondObject, firstCoords, secondCoords) then
-                print('objects collide')
                 firstObject:ReverseVelocities()
                 secondObject:ReverseVelocities()
 
@@ -46,7 +44,6 @@ function M:ResolveCollisions(dt)
                 secondObject:Collision(firstObject)
                 
             else
-                print('no collision')
                 firstObject:SetNewCoords(firstCoords)
                 secondObject:SetNewCoords(secondCoords)
             end
@@ -104,9 +101,9 @@ end
 
 function M:RemoveProjectile(projectile)
     self.projectiles[projectile] = nil
-    for k,v in ipairs(self.collidables) do
-        if v == projectile then
-            table.remove(self.collidables, k)
+    for i = 1, #self.collidables do
+        if self.collidables[i] == projectile then
+            table.remove(self.collidables, i)
         end
     end
 end

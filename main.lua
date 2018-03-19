@@ -139,5 +139,5 @@ function love.draw()
         love.graphics.print(joystick:getID(), 150, i * 20)
 
     end 
-    love.timer.sleep(0.01)
+    --love.timer.sleep(0.01)
 end

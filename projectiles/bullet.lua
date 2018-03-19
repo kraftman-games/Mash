@@ -8,7 +8,9 @@ local bullet = {
 bullet.__index = bullet
 
 function bullet:Update(dt)
-
+    if self.destroyed then
+        self.world:RemoveProjectile(self)
+    end
 end
 
 function bullet:GetNewCoords(dt)
@@ -28,6 +30,14 @@ function bullet:Draw()
 
 end
 
+function bullet:Collision()
+    self.destroyed = true
+end
+
+function bullet:GetRadius()
+    return self.radius
+end
+
 function bullet:GetFireRate()
     return self.fireRate
 end
@@ -40,16 +50,24 @@ function bullet:RemoveOOB()
     self.world:RemoveProjectile(self)
 end
 
+function bullet:ReverseVelocities()
+    self.vx = -self.vx
+    self.vy = -self.vy
+end
 
+function bullet:GetCollisionDamage()
+    return self.radius
+end
 
 function bullet:Create(world, x, y, angle)
     local b = setmetatable({}, bullet)
     b.world = world
     b.x = x
     b.y = y
-    b.vMultiplier = 500
+    b.vMultiplier = 200
     b.vx = b.vMultiplier * math.sin( angle )
     b.vy = b.vMultiplier * math.cos( angle )
+    b.collisionDamage = 20
     b.radius = 2 
     return b
 end
