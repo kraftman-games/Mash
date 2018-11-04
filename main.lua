@@ -1,6 +1,7 @@
 
 
 local world = require('world')
+local background = require('background')
 local player = require('player')
 local comet = require('comet')
 local lg = love.graphics
@@ -14,6 +15,9 @@ DEBUG = true
 local newComet = comet:Create(world, 200, 200, 100)
 world:AddComet(newComet)
 
+function love.resize(w, h) 
+  -- update the background dimensions
+end
 
 local function RemoveController(controller)
     if controller.joystick:isConnected() == false then
@@ -36,17 +40,24 @@ local function AddController(joystick)
     end
 end
 
+function love.keypressed(key) 
+  if(key == 'escape') then
+    love.event.quit(0)
+  end
+end
+
 function love.update(dt)
-    local joysticks = love.joystick.getJoysticks()
-    -- add controllers
-    for i, joystick in ipairs(joysticks) do
-        AddController(joystick)
-    end 
-    --remove controllers
-    for id, controller in pairs(controllers) do
-        RemoveController(controller)
-    end
-    world:Update(dt)
+  local joysticks = love.joystick.getJoysticks()
+  -- add controllers
+  for i, joystick in ipairs(joysticks) do
+      AddController(joystick)
+  end 
+  --remove controllers
+  for id, controller in pairs(controllers) do
+      RemoveController(controller)
+  end
+  background:update(dt)
+  world:Update(dt)
 end
 
 function AddPlayer(controller, playerID)
@@ -64,6 +75,10 @@ function AddPlayer(controller, playerID)
     end
 
 end
+
+function love.joystickpressed(joystick,button)
+    print(joystick:getID(), joystick:getGUID(), button)
+ end
 
 function love.gamepadpressed(joystick, button)
     AddController(joystick)
@@ -131,13 +146,14 @@ function love.gamepadaxis( joystick, axis, value )
 end
 
 function love.draw()
-    world:Draw()
-    
-    local joysticks = love.joystick.getJoysticks()
-    for i, joystick in ipairs(joysticks) do
-        love.graphics.print(joystick:getName(), 10, i * 20)
-        love.graphics.print(joystick:getID(), 150, i * 20)
+  background:draw()
+  love.graphics.setColor(1,1,1,1)
+  world:Draw()
+  local joysticks = love.joystick.getJoysticks()
+  for i, joystick in ipairs(joysticks) do
+      love.graphics.print(joystick:getName(), 10, i * 20)
+      love.graphics.print(joystick:getID(), 250, i * 20)
 
-    end 
-    --love.timer.sleep(0.01)
+  end 
+  --love.timer.sleep(0.01)
 end
