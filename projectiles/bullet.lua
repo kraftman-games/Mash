@@ -15,7 +15,7 @@ end
 
 function bullet:GetNewCoords(dt)
     return {
-        x = self.x + self.vx * dt,
+        x = self.x + (self.vx * dt),
         y = self.y + self.vy * dt
     }
 end
@@ -27,7 +27,6 @@ end
 
 function bullet:Draw()
     lg.circle('fill', self.x, self.y, self.radius)
-
 end
 
 function bullet:Collision()
@@ -51,24 +50,23 @@ function bullet:RemoveOOB()
 end
 
 function bullet:ReverseVelocities()
-    self.vx = -self.vx
-    self.vy = -self.vy
+    
 end
 
 function bullet:GetCollisionDamage()
     return self.radius
 end
 
-function bullet:Create(world, x, y, angle)
+function bullet:Create(world, x, y)
     local b = setmetatable({}, bullet)
     b.world = world
-    b.x = x
+    b.x = x - 10
     b.y = y
-    b.vMultiplier = 200
-    b.vx = b.vMultiplier * math.sin( angle )
-    b.vy = b.vMultiplier * math.cos( angle )
+    b.vx = 0
+    b.vy = -10
     b.collisionDamage = 20
-    b.radius = 2 
+    b.radius = 5
+    b.type = 'bullet'
     return b
 end
 

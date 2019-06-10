@@ -1,6 +1,8 @@
 
 local function ObjectsCollide(first, second, firstCoords, secondCoords)
-
+    if (first.type == 'bullet' and second.type == 'bullet') then
+        return false
+    end
     totalRad = first:GetRadius() + second:GetRadius()
     local newRad = math.sqrt((firstCoords.x - secondCoords.x)^2 + (firstCoords.y - secondCoords.y)^2)
 

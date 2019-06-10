@@ -3,6 +3,7 @@ local lg = love.graphics
 
 local player = {}
 local bullets = require 'projectiles.bullet'
+local weaponMenu = require 'weapon-menu/weapon-menu'
 
 player.__index = player
 
@@ -52,9 +53,9 @@ function player:Fire(dt)
     self.lastFired = self.lastFired + dt
     local fireRate = self.projectile:GetFireRate()
     fireRate = fireRate * self.fireRate
-    print(self.lastFired, fireRate)
+    -- print(self.lastFired, fireRate)
     if self.lastFired > fireRate then
-        print('firing')
+        -- print('firing')
         self.lastFired = 0
         local projectile = self.projectile:Create(self.world, self.x, self.y, self.angle)
         projectile:SetPlayer(self)
@@ -62,13 +63,40 @@ function player:Fire(dt)
     end
 end
 
+function player:DrawShip()
+  lg.setColor(self.r, self.g, self.b)
+  lg.circle('fill', self.x, self.y, 5)
+  lg.arc( 'fill', self.x, self.y, self.radius, self.shield-self.shieldwidth, self.shield+self.shieldwidth, 3 )
+  if DEBUG then
+      love.graphics.print(self.health, self.x + 10, self.y)
+  end
+end
+
+function player:HideHealth()
+  if self.menuOpen then
+    return true
+  end
+end
+
+function player:DrawHealth()
+  if self:HideHealth() then
+    return
+  end
+  local healthRad = 15
+  lg.setColor(0, 255, 0)
+  lg.arc('line', self.x, self.y, healthRad, 0, 2*math.pi/200*self.health)
+  lg.setColor(255,255,255)
+end
+
+function player:DrawMenu()
+  self.weaponMenu:Draw()
+end
+
 function player:Draw()
-    lg.setColor(self.r, self.g, self.b)
-    lg.circle('fill', self.x, self.y, 5)
-    lg.arc( 'fill', self.x, self.y, self.radius, self.shield-self.shieldwidth, self.shield+self.shieldwidth, 3 )
-    if DEBUG then
-        love.graphics.print(self.health, self.x + 10, self.y)
-    end
+  self:DrawShip()
+  self:DrawHealth()
+  self:DrawMenu()
+
 end
 
 function player:StartFiring()
@@ -97,6 +125,7 @@ function player:OpenWeaponMenu()
     self.b = 100
     self.lastInput = love.timer.getTime()
     self.ignoreSteering = true
+    self.menuOpen = true
 end
 
 function player:CloseWeaponMenu()
@@ -105,21 +134,27 @@ function player:CloseWeaponMenu()
     self.b = 200
     self.lastInput = love.timer.getTime()
     self.ignoreSteering = false
+    self.menuOpen = false
 end
 
+function player:SecondaryFire()
+  print('firing secondary')
+end
 
 function player:ButtonDown(button)
     print('button down:', button, self.vx)
-    if button == self.shoulder then
+    if button == self.trigger then
         self:StartFiring()
     elseif button == self.stick then
         self:OpenWeaponMenu()
+    elseif button == self.shoulder then
+      self:SecondaryFire();
     end
 end
 
 function player:ButtonUp(button)
     print('button up: ', button)
-    if button == self.shoulder then
+    if button == self.trigger then
         self:StopFiring()
     elseif button == self.stick then
         self:CloseWeaponMenu()
@@ -148,8 +183,8 @@ function player:Create(world, x, y, joystick, axis )
     p.shoulder = axis..'shoulder'
     p.stick = axis..'stick'
     p.speed = 2
-    p.maxV = 30
-    p.acceleration = 1
+    p.maxV = 50
+    p.acceleration = 20
     p.shield = 0
     p.shieldwidth = 0.5
     p.lastFired = 0
@@ -159,6 +194,7 @@ function player:Create(world, x, y, joystick, axis )
     p.health = 200
     p.lastInput = love.timer.getTime()
     p.collisionDamage = 5
+    p.weaponMenu = weaponMenu:Create(p)
     return p
 end
 
