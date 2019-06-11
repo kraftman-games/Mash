@@ -2,7 +2,7 @@
 local lg = love.graphics
 
 local player = {}
-local bullets = require 'projectiles.bullet'
+local bullets = require 'guns.spud'
 local weaponMenu = require 'weapon-menu/weapon-menu'
 
 player.__index = player

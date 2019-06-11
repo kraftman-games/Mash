@@ -1,7 +1,9 @@
 
 local segment = require('weapon-menu/menu-segment')
-local megaBullets = require'projectiles.megabullet'
-local bullets = require 'projectiles.bullet'
+
+local spudgun = require'guns.spud'
+local cannon = require 'guns.cannon'
+local orb = require 'guns.orb'
 
 local menu = {}
 local lg = love.graphics
@@ -38,11 +40,23 @@ function menu:GetY()
   return self.player.y
 end
 
+local segmentTypes = {
+  spudGun = {
+    onActivate = function(player)
+      player.projectile = spud
+    end,
+    color = {r = 255, g =0, b = 0}
+  },
+  cannon = {
+    
+  }
+}
+
 
 function menu:CreateSegments()
   local segments = {}
   local segmentOffset = -1
-  segments[1] = segment:Create(self, 1*(math.pi/3)-segmentOffset, {r = 255, g =0, b = 0})
+  segments[1] = segment:Create(self, 1*(math.pi/3)-segmentOffset, )
   segments[2] = segment:Create(self, 2*(math.pi/3)-segmentOffset, {r = 255,g = 255,b = 255})
   segments[3] = segment:Create(self, 3*(math.pi/3)-segmentOffset, {r = 0,g = 255,b =  0})
   segments[4] = segment:Create(self, 4*(math.pi/3)-segmentOffset, {r = 255,g = 255,b = 255})
@@ -64,11 +78,7 @@ function menu:Open()
 end
 
 function menu:Close()
-  if self.player.projectile == bullets then
-    self.player.projectile = megaBullets
-  else 
-    self.player.projectile = bullets
-  end
+  self.selectedSegment:Activate()
 end
 
 return menu

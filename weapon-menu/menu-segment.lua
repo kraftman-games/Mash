@@ -5,9 +5,6 @@ local segment = {}
 local lg = love.graphics
 
 segment.__index = segment
-function segment:DrawActive()
-
-end
 
 function segment:Draw()
   if self.enabled then
@@ -31,13 +28,19 @@ function segment:SetActive(bool)
   self.active = bool
 end
 
-function segment:Create(menu, angle, color )
+function segment:Activate()
+  self.onActivate(player)
+
+end 
+
+function segment:Create(menu, angle, color, onActivate)
   local mySegment = setmetatable({}, segment)
   mySegment.angle = angle
   mySegment.enabled = true
   mySegment.color = color
   mySegment.menu = menu
   mySegment.active = true
+  mySegment.onActivate = onActivate
   return mySegment
 end
 
