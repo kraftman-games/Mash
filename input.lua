@@ -159,5 +159,9 @@ function input:create(world)
   return inp
 end
 
+function input:keypressed()
+
+end
+
 
 return input

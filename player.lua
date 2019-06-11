@@ -8,26 +8,29 @@ local weaponMenu = require 'weapon-menu/weapon-menu'
 player.__index = player
 
 function player:Update(dt)
+  if self.menuOpen then
+    self.weaponMenu:Update(dt)
+  end
 
-    self.opp = self.ignoreSteering and 0 or self.joystick:getGamepadAxis(self.axisX)
-    self.vx = self.vx + self.opp * self.acceleration
-    self.vx = self.vx / (1 + dt)
-    self.vx = math.min(self.vx, self.maxV)
-    self.vx = math.max(self.vx, -self.maxV)
+  self.opp = self.ignoreSteering and 0 or self.joystick:getGamepadAxis(self.axisX)
+  self.vx = self.vx + self.opp * self.acceleration
+  self.vx = self.vx / (1 + dt)
+  self.vx = math.min(self.vx, self.maxV)
+  self.vx = math.max(self.vx, -self.maxV)
 
-    self.adj = self.ignoreSteering and 0 or self.joystick:getGamepadAxis(self.axisY)
-    self.vy = self.vy + self.adj * self.acceleration
-    self.vy = self.vy / (1 + dt)
-    self.vy = math.min(self.vy, self.maxV)
-    self.vy = math.max(self.vy, -self.maxV)
-    
-    self.shield = self.joystick:getGamepadAxis(self.trigger) * (2 * math.pi - self.shieldwidth*2 ) - self.shieldwidth/2
+  self.adj = self.ignoreSteering and 0 or self.joystick:getGamepadAxis(self.axisY)
+  self.vy = self.vy + self.adj * self.acceleration
+  self.vy = self.vy / (1 + dt)
+  self.vy = math.min(self.vy, self.maxV)
+  self.vy = math.max(self.vy, -self.maxV)
+  
+  self.shield = self.joystick:getGamepadAxis(self.trigger) * (2 * math.pi - self.shieldwidth*2 ) - self.shieldwidth/2
 
-    self.angle = math.atan2(self.opp, self.adj)
+  self.angle = math.atan2(self.opp, self.adj)
 
-    if self.firing then
-        self:Fire(dt)
-    end
+  if self.firing then
+      self:Fire(dt)
+  end
 
 end
 
@@ -89,7 +92,9 @@ function player:DrawHealth()
 end
 
 function player:DrawMenu()
-  self.weaponMenu:Draw()
+  if self.menuOpen then
+    self.weaponMenu:Draw()
+  end
 end
 
 function player:Draw()
@@ -126,6 +131,7 @@ function player:OpenWeaponMenu()
     self.lastInput = love.timer.getTime()
     self.ignoreSteering = true
     self.menuOpen = true
+    self.weaponMenu:Open()
 end
 
 function player:CloseWeaponMenu()
@@ -135,6 +141,7 @@ function player:CloseWeaponMenu()
     self.lastInput = love.timer.getTime()
     self.ignoreSteering = false
     self.menuOpen = false
+    self.weaponMenu:Close()
 end
 
 function player:SecondaryFire()
@@ -157,7 +164,9 @@ function player:ButtonUp(button)
     if button == self.trigger then
         self:StopFiring()
     elseif button == self.stick then
+      if self.menuOpen then
         self:CloseWeaponMenu()
+      end
     end
 end
 
