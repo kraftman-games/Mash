@@ -26,7 +26,7 @@ function bullet:SetNewCoords(coords)
 end
 
 function bullet:Draw()
-    lg.circle('line', self.x, self.y, self.radius)
+    lg.circle('fill', self.x, self.y, self.radius)
 end
 
 function bullet:Collision()
@@ -57,17 +57,28 @@ function bullet:GetCollisionDamage()
     return self.radius
 end
 
-function bullet:Create(world, x, y)
-    local b = setmetatable({}, bullet)
-    b.world = world
-    b.x = x - 10
-    b.y = y
-    b.vx = 0
-    b.vy = -10
-    b.collisionDamage = 20
-    b.radius = 5
-    b.type = 'bullet'
+local getSegment = function()
+    return {
+      color= {r = 255, g = 255, b = 255}
+    }
+  end
+  
+  function bullet:Create(world, x, y)
+    local defaults = {
+      world = world,
+      x = x - 10,
+      y = y,
+      vx = 0,
+      vy = -10,
+      collisionDamage = 20,
+      radius = 5,
+      type = 'bullet',
+      slot= weapon,
+      segment = getSegment()
+    }
+    local b = setmetatable(defaults, bullet)
+    
     return b
-end
+  end
 
 return bullet

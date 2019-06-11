@@ -1,9 +1,9 @@
 
 local segment = require('weapon-menu/menu-segment')
 
-local spudgun = require'guns.spud'
-local cannon = require 'guns.cannon'
-local orb = require 'guns.orb'
+local spudgun = require'weapons.spud'
+local cannon = require 'weapons.cannon'
+local orb = require 'weapons.orb'
 
 local menu = {}
 local lg = love.graphics
@@ -17,7 +17,6 @@ function menu:Draw()
 end
 
 function menu:Update(dt)
-  print('me u update')
   local x = self.player.joystick:getGamepadAxis(self.player.axisX)
   local y = -self.player.joystick:getGamepadAxis(self.player.axisY)
   print(x,y)
@@ -29,29 +28,15 @@ function menu:Update(dt)
   self.selectedSegment = self.segments[selectedID]
   self.selectedSegment:SetActive(true)
 
-  
 end
 
 function menu:GetX()
-  return self.player.x
+  return self.player:GetX()
 end
 
 function menu:GetY()
-  return self.player.y
+  return self.player:GetY()
 end
-
-local segmentTypes = {
-  spudGun = {
-    onActivate = function(player)
-      player.projectile = spud
-    end,
-    color = {r = 255, g =0, b = 0}
-  },
-  cannon = {
-    
-  }
-}
-
 
 function menu:CreateSegments()
   local segments = {}

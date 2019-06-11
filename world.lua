@@ -1,4 +1,6 @@
 
+
+
 local function ObjectsCollide(first, second, firstCoords, secondCoords)
     if (first.type == 'bullet' and second.type == 'bullet') then
         return false
@@ -9,15 +11,10 @@ local function ObjectsCollide(first, second, firstCoords, secondCoords)
     return newRad < totalRad 
 end
 
-local M = {
-    collidables = {},
-    players = {},
-    projectiles = {},
-    comets = {},
-    width = love.graphics.getWidth(),
-    height = love.graphics.getHeight(),
-    bufferWidth = 40
-}
+local M = {}
+M.__index = M
+
+local inputHandler = (require 'input'):create(M)
 
 function M:RemoveOOB()
     for k,v in pairs(self.collidables) do
@@ -29,32 +26,36 @@ function M:RemoveOOB()
 end
 
 function M:ResolveCollisions(dt)
-    local firstObject, secondObject, firstCoords, secondCoords
-    for i = 1, #self.collidables do
-        firstObject = self.collidables[i]
-        firstCoords = firstObject:GetNewCoords(dt)
-        for j = i + 1, #self.collidables do
-            secondObject = self.collidables[j]
-            secondCoords = secondObject:GetNewCoords(dt)
-            if ObjectsCollide(firstObject, secondObject, firstCoords, secondCoords) then
-                firstObject:ReverseVelocities()
-                secondObject:ReverseVelocities()
+  local firstObject, secondObject, firstCoords, secondCoords
+  for i = 1, #self.collidables do
+    firstObject = self.collidables[i]
+    firstCoords = firstObject:GetNewCoords(dt)
+    for j = i + 1, #self.collidables do
+      secondObject = self.collidables[j]
+      secondCoords = secondObject:GetNewCoords(dt)
+      if ObjectsCollide(firstObject, secondObject, firstCoords, secondCoords) then
+        firstObject:ReverseVelocities()
+        secondObject:ReverseVelocities()
 
-                firstObject:SetNewCoords(firstObject:GetNewCoords(dt))
-                secondObject:SetNewCoords(secondObject:GetNewCoords(dt))
-                firstObject:Collision(secondObject)
-                secondObject:Collision(firstObject)
-                
-            else
-                firstObject:SetNewCoords(firstCoords)
-                secondObject:SetNewCoords(secondCoords)
-            end
-        end
+        firstObject:SetNewCoords(firstObject:GetNewCoords(dt))
+        secondObject:SetNewCoords(secondObject:GetNewCoords(dt))
+        firstObject:Collision(secondObject)
+        secondObject:Collision(firstObject)
+        
+      else
+        firstObject:SetNewCoords(firstCoords)
+        secondObject:SetNewCoords(secondCoords)
+      end
     end
+  end
 
 end
 
 function M:Update(dt)
+  if self.globalState.paused == true then
+    return 
+  end
+  inputHandler:Update(dt)
     self:RemoveOOB()
     for k, player in pairs(self.players) do
         player:Update(dt)
@@ -70,15 +71,16 @@ function M:Update(dt)
 end
 
 function M:Draw()
-    for k, projectile in pairs(self.players) do
-        projectile:Draw()
-    end
-    for k, projectile in pairs(self.projectiles) do
-        projectile:Draw()
-    end
-    for k, comet in pairs(self.comets) do
-        comet:Draw()
-    end
+  inputHandler:Draw()
+  for k, comet in pairs(self.comets) do
+      comet:Draw()
+  end
+  for k, player in pairs(self.players) do
+      player:Draw()
+  end
+  for k, projectile in pairs(self.projectiles) do
+      projectile:Draw()
+  end
 end
 
 function M:AddPlayer(player)
@@ -102,12 +104,47 @@ function M:AddComet(comet)
 end
 
 function M:RemoveProjectile(projectile)
-    self.projectiles[projectile] = nil
-    for i = 1, #self.collidables do
-        if self.collidables[i] == projectile then
-            table.remove(self.collidables, i)
-        end
-    end
+  self.projectiles[projectile] = nil
+  for i = 1, #self.collidables do
+      if self.collidables[i] == projectile then
+          table.remove(self.collidables, i)
+      end
+  end
+end
+
+function M:KeyPressed(key)
+  inputHandler:KeyPressed(key)
+end
+
+function M:KeyReleased(key)
+  inputHandler:KeyReleased(key)
+end
+
+function M:GamepadReleased(joystick, button)
+  inputHandler:GamepadReleased(joystick, button)
+end
+
+function M:GamepadPressed(joystick, button)
+  inputHandler:GamepadPressed(joystick, button)
+end
+
+function M:GamepadAxis(joystick, axis, value)
+  inputHandler:GamepadAxis(joystick, axis, value)
+end
+
+function M:Create(globalState)
+  local defaults = {
+    collidables = {},
+    players = {},
+    projectiles = {},
+    comets = {},
+    width = love.graphics.getWidth(),
+    height = love.graphics.getHeight(),
+    bufferWidth = 40,
+    globalState = globalState
+  }
+  local temp = setmetatable(defaults, M)
+  return temp
 end
 
 return M

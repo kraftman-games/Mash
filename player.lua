@@ -2,7 +2,7 @@
 local lg = love.graphics
 
 local player = {}
-local bullets = require 'guns.spud'
+local spudGun = require 'weapons.spud'
 local weaponMenu = require 'weapon-menu/weapon-menu'
 
 player.__index = player
@@ -97,6 +97,23 @@ function player:DrawMenu()
   end
 end
 
+function player:GetX()
+  return self.x
+end
+
+function player:GetY()
+  return self.y
+end
+
+function player:GetWeapon()
+  return self.weapon
+end
+
+function player:SetWeapon(weapon)
+  self.weapon = weapon
+end
+
+
 function player:Draw()
   self:DrawShip()
   self:DrawHealth()
@@ -175,36 +192,40 @@ function player:GetRadius()
 end
 
 function player:Create(world, x, y, joystick, axis )
-    local p = setmetatable({}, player)
-    p.x = x
-    p.y = y
-    p.joystick = joystick
-    p.vx = 0
-    p.vy = 0
-    p.r = 200
-    p.g = 200
-    p.b = 200
-    p.world = world
-    p.axisX = axis..'x'
-    p.axisY = axis..'y'
-    p.stick = axis..'stick'
-    p.trigger = 'trigger'..axis
-    p.shoulder = axis..'shoulder'
-    p.stick = axis..'stick'
-    p.speed = 2
-    p.maxV = 50
-    p.acceleration = 20
-    p.shield = 0
-    p.shieldwidth = 0.5
-    p.lastFired = 0
-    p.projectile = bullets
-    p.fireRate = 0.1
-    p.radius = 5
-    p.health = 200
-    p.lastInput = love.timer.getTime()
-    p.collisionDamage = 5
-    p.weaponMenu = weaponMenu:Create(p)
-    return p
+  local defaults = {
+    x = x,
+    y = y,
+    joystick = joystick,
+    vx = 0,
+    vy = 0,
+    r = 200,
+    g = 200,
+    b = 200,
+    world = world,
+    axisX = axis..'x',
+    axisY = axis..'y',
+    stick = axis..'stick',
+    trigger = 'trigger'..axis,
+    shoulder = axis..'shoulder',
+    stick = axis..'stick',
+    speed = 2,
+    maxV = 50,
+    acceleration = 20,
+    shield = 0,
+    shieldwidth = 0.5,
+    lastFired = 0,
+    defaultWeapon = spudGun,
+    weapon = spudGun,
+    fireRate = 0.1,
+    radius = 5,
+    health = 200,
+    lastInput = love.timer.getTime(),
+    collisionDamage = 5,
+    weaponMenu = weaponMenu:Create(p),
+  }
+  local p = setmetatable(defaults, player)
+
+  return p
 end
 
 return player
