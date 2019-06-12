@@ -5,6 +5,11 @@ local player = {}
 local spudGun = require 'weapons.spud'
 local weaponMenu = require 'weapon-menu/weapon-menu'
 
+
+local spudgun = require'weapons.spud'
+local cannon = require 'weapons.cannon'
+local orb = require 'weapons.orb'
+
 player.__index = player
 
 function player:Update(dt)
@@ -35,10 +40,10 @@ function player:Update(dt)
 end
 
 function player:GetNewCoords(dt)
-    return { 
-        x = self.x + dt * self.speed * self.vx, 
-        y = self.y + dt * self.speed * self.vy
-    }
+  return { 
+    x = self.x + dt * self.speed * self.vx, 
+    y = self.y + dt * self.speed * self.vy
+  }
 end
 
 function player:SetNewCoords(coords)
@@ -47,23 +52,24 @@ function player:SetNewCoords(coords)
 end
 
 function player:ReverseVelocities()
-    self.vx = -self.vx
-    self.vy = -self.vy
+  self.vx = -self.vx
+  self.vy = -self.vy
 end
 
 
 function player:Fire(dt)
-    self.lastFired = self.lastFired + dt
-    local fireRate = self.weapon:GetFireRate()
-    fireRate = fireRate * self.fireRate
-    -- print(self.lastFired, fireRate)
-    if self.lastFired > fireRate then
-        -- print('firing')
-        self.lastFired = 0
-        local projectile = self.weapon:Create(self.world, self.x, self.y, self.angle)
-        projectile:SetPlayer(self)
-        self.world:AddProjectile(projectile)
-    end
+  print('firing')
+  self.lastFired = self.lastFired + dt
+  local fireRate = self.weapon:GetFireRate()
+  fireRate = fireRate * self.fireRate
+  -- print(self.lastFired, fireRate)
+  if self.lastFired > fireRate then
+    -- print('firing')
+    self.lastFired = 0
+    local projectile = self.weapon:Create(self.world, self.x, self.y, self.angle)
+    projectile:SetPlayer(self)
+    self.world:AddProjectile(projectile)
+  end
 end
 
 function player:DrawShip()
@@ -166,14 +172,14 @@ function player:SecondaryFire()
 end
 
 function player:ButtonDown(button)
-    print('button down:', button, self.vx)
-    if button == self.trigger then
-        self:StartFiring()
-    elseif button == self.stick then
-        self:OpenWeaponMenu()
-    elseif button == self.shoulder then
-      self:SecondaryFire();
-    end
+  -- print('button down:', button, self.vx)
+  if button == self.trigger then
+      self:StartFiring()
+  elseif button == self.stick then
+      self:OpenWeaponMenu()
+  elseif button == self.shoulder then
+    self:SecondaryFire();
+  end
 end
 
 function player:ButtonUp(button)
@@ -220,9 +226,11 @@ function player:Create(world, x, y, joystick, axis )
     radius = 5,
     health = 200,
     collisionDamage = 5,
+    type = 'player'
   }
   local p = setmetatable(defaults, player)
   p.weaponMenu = weaponMenu:Create(p)
+  p.weaponMenu:AddSkill(cannon:Create(world, x,y))
   p.lastInput = love.timer.getTime()
   return p
 end

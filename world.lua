@@ -2,13 +2,14 @@
 
 
 local function ObjectsCollide(first, second, firstCoords, secondCoords)
-    if (first.type == 'bullet' and second.type == 'bullet') then
-        return false
-    end
-    totalRad = first:GetRadius() + second:GetRadius()
-    local newRad = math.sqrt((firstCoords.x - secondCoords.x)^2 + (firstCoords.y - secondCoords.y)^2)
+  if (first.type == 'bullet' and second.type == 'bullet') then
+    return false
+  end
+  
+  totalRad = first:GetRadius() + second:GetRadius()
+  local newRad = math.sqrt((firstCoords.x - secondCoords.x)^2 + (firstCoords.y - secondCoords.y)^2)
 
-    return newRad < totalRad 
+  return newRad < totalRad 
 end
 
 local M = {}
@@ -84,9 +85,6 @@ function M:Draw()
 end
 
 function M:AddPlayer(player)
-  for k, v in pairs(player) do
-    print(k,v)
-  end
   self.players[player] = player
   table.insert(self.collidables, player)
 end
@@ -148,7 +146,7 @@ function M:Create(globalState)
   }
   local temp = setmetatable(defaults, M)
   temp.inputHandler = Input:Create(temp)
-  print(temp.players)
+  --print(temp.players)
   return temp
 end
 

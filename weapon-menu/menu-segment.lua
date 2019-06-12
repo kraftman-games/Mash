@@ -8,9 +8,10 @@ segment.__index = segment
 
 function segment:Draw()
 
-  if self.enabled then
-    lg.setColor(self.color.r, self.color.g, self.color.b)
-  end
+  
+  lg.setColor(self.color.r, self.color.g, self.color.b)
+  print(self.color.r, self.color.g, self.color.b)
+  
   local rad = 40
   local startAng = self.angle
   local endAng = startAng + 0.5
@@ -28,9 +29,22 @@ function segment:SetActive(bool)
   self.active = bool
 end
 
-function segment:Activate()
-  -- self.onActivate(player)
+function segment:Activate(player)
+  if not self.assignedSkill then
+    return
+  end
+  self.assignedSkill:Activate(player)
 end 
+
+function segment:SetColor(color)
+  print('setting color:', color.r, color.g, color.b)
+  self.color = color
+end
+
+function segment:SetSkill(skill)
+  self.assignedSkill = skill
+  self:SetColor(skill.segmentColor)
+end
 
 function segment:Create(menu, angle, type)
   local mySegment = setmetatable({}, segment)
@@ -40,6 +54,7 @@ function segment:Create(menu, angle, type)
   mySegment.menu = menu
   mySegment.active = true
   mySegment.type = type
+  mySegment.assignedSkill = nil
   return mySegment
 end
 

@@ -83,7 +83,7 @@ function input:GamepadReleased(joystick, button)
 end
 
 function input:GamepadAxis(joystick, axis, value)
-  print('gamepad axis:', joystick, axis, value)
+  --print('gamepad axis:', joystick, axis, value)
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
 

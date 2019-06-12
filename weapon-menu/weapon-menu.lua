@@ -1,9 +1,6 @@
 
 local segment = require('weapon-menu/menu-segment')
 
-local spudgun = require'weapons.spud'
-local cannon = require 'weapons.cannon'
-local orb = require 'weapons.orb'
 
 local menu = {}
 local lg = love.graphics
@@ -12,7 +9,6 @@ menu.__index = menu
 
 function menu:Draw()
   for k, v in pairs(self.segments) do
-    print(v.type)
     v:Draw()
   end
 end
@@ -20,12 +16,12 @@ end
 function menu:Update(dt)
   local x = self.player.joystick:getGamepadAxis(self.player.axisX)
   local y = -self.player.joystick:getGamepadAxis(self.player.axisY)
-  print(x,y)
+  --print(x,y)
   local selectedID = math.floor((math.atan2(x,y)/math.pi)*3+3+0.999)
   for k,v in pairs(self.segments) do
     v:SetActive(false)
   end
-  print(selectedID)
+  --print(selectedID)
   self.selectedSegment = self.segments[selectedID]
   self.selectedSegment:SetActive(true)
 
@@ -63,8 +59,25 @@ function menu:Open()
 
 end
 
+function menu:getEmptySegment(type)
+  for k,segment in pairs(self.segments) do
+    if not segment.assignedSkill then
+      return segment
+    end
+  end
+end
+
+function menu:AddSkill(skill)
+  local emptySegment = self:getEmptySegment(skill.type)
+  print('found empty')
+  if emptySegment then
+    print('set skill')
+    emptySegment:SetSkill(skill)
+  end
+end
+
 function menu:Close()
-  self.selectedSegment:Activate()
+  self.selectedSegment:Activate(self.player)
 end
 
 return menu

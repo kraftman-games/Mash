@@ -42,7 +42,11 @@ function bullet:GetFireRate()
 end
 
 function bullet:SetPlayer(player)
-    self.owner = player
+  self.owner = player
+end
+
+function bullet:GetOwner()
+  return self.owner
 end
 
 function bullet:RemoveOOB()
@@ -54,16 +58,10 @@ function bullet:ReverseVelocities()
 end
 
 function bullet:GetCollisionDamage()
-    return self.radius
+  return self.radius
 end
 
-local getSegment = function()
-  return {
-    color= {r = 255, g = 255, b = 255}
-  }
-end
-
-function bullet:SetSelected(player)
+function bullet:Activate(player)
   if (player.weapon == self) then
     player.weapon = player.defaultWeapon
     return
@@ -80,9 +78,9 @@ function bullet:Create(world, x, y)
     vy = -10,
     collisionDamage = 20,
     radius = 5,
-    type = 'bullet',
-    slot = weapon,
-    segment = getSegment()
+    projectileType = 'bullet',
+    type = 'weapon',
+    segmentColor= {r = 255, g = 0, b = 0}
   }
   local b = setmetatable(defaults, bullet)
   
