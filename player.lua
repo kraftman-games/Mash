@@ -54,13 +54,13 @@ end
 
 function player:Fire(dt)
     self.lastFired = self.lastFired + dt
-    local fireRate = self.projectile:GetFireRate()
+    local fireRate = self.weapon:GetFireRate()
     fireRate = fireRate * self.fireRate
     -- print(self.lastFired, fireRate)
     if self.lastFired > fireRate then
         -- print('firing')
         self.lastFired = 0
-        local projectile = self.projectile:Create(self.world, self.x, self.y, self.angle)
+        local projectile = self.weapon:Create(self.world, self.x, self.y, self.angle)
         projectile:SetPlayer(self)
         self.world:AddProjectile(projectile)
     end
@@ -219,12 +219,11 @@ function player:Create(world, x, y, joystick, axis )
     fireRate = 0.1,
     radius = 5,
     health = 200,
-    lastInput = love.timer.getTime(),
     collisionDamage = 5,
-    weaponMenu = weaponMenu:Create(p),
   }
   local p = setmetatable(defaults, player)
-
+  p.weaponMenu = weaponMenu:Create(p)
+  p.lastInput = love.timer.getTime()
   return p
 end
 

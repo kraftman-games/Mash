@@ -14,7 +14,7 @@ end
 local M = {}
 M.__index = M
 
-local inputHandler = (require 'input'):create(M)
+local Input = require 'input'
 
 function M:RemoveOOB()
     for k,v in pairs(self.collidables) do
@@ -55,7 +55,7 @@ function M:Update(dt)
   if self.globalState.paused == true then
     return 
   end
-  inputHandler:Update(dt)
+  self.inputHandler:Update(dt)
     self:RemoveOOB()
     for k, player in pairs(self.players) do
         player:Update(dt)
@@ -71,7 +71,7 @@ function M:Update(dt)
 end
 
 function M:Draw()
-  inputHandler:Draw()
+  self.inputHandler:Draw()
   for k, comet in pairs(self.comets) do
       comet:Draw()
   end
@@ -84,8 +84,11 @@ function M:Draw()
 end
 
 function M:AddPlayer(player)
-    self.players[player] = player
-    table.insert(self.collidables, player)
+  for k, v in pairs(player) do
+    print(k,v)
+  end
+  self.players[player] = player
+  table.insert(self.collidables, player)
 end
 
 function M:AddProjectile(projectile)
@@ -113,23 +116,23 @@ function M:RemoveProjectile(projectile)
 end
 
 function M:KeyPressed(key)
-  inputHandler:KeyPressed(key)
+  self.inputHandler:KeyPressed(key)
 end
 
 function M:KeyReleased(key)
-  inputHandler:KeyReleased(key)
+  self.inputHandler:KeyReleased(key)
 end
 
 function M:GamepadReleased(joystick, button)
-  inputHandler:GamepadReleased(joystick, button)
+  self.inputHandler:GamepadReleased(joystick, button)
 end
 
 function M:GamepadPressed(joystick, button)
-  inputHandler:GamepadPressed(joystick, button)
+  self.inputHandler:GamepadPressed(joystick, button)
 end
 
 function M:GamepadAxis(joystick, axis, value)
-  inputHandler:GamepadAxis(joystick, axis, value)
+  self.inputHandler:GamepadAxis(joystick, axis, value)
 end
 
 function M:Create(globalState)
@@ -144,6 +147,8 @@ function M:Create(globalState)
     globalState = globalState
   }
   local temp = setmetatable(defaults, M)
+  temp.inputHandler = Input:Create(temp)
+  print(temp.players)
   return temp
 end
 

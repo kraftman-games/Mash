@@ -5,7 +5,6 @@ local background = require('background')
 local player = require('player')
 local comet = require('comet')
 local lg = love.graphics
-local inputHandler = (require 'input'):create(world)
 -- love.window.setFullscreen(true)
 
 -- ===============================
@@ -55,5 +54,4 @@ function love.draw()
   background:draw()
   love.graphics.setColor(1,1,1,1)
   world:Draw()
-  inputHandler:draw()
 end

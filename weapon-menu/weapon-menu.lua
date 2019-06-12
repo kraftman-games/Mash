@@ -12,6 +12,7 @@ menu.__index = menu
 
 function menu:Draw()
   for k, v in pairs(self.segments) do
+    print(v.type)
     v:Draw()
   end
 end
@@ -41,12 +42,12 @@ end
 function menu:CreateSegments()
   local segments = {}
   local segmentOffset = -1
-  segments[1] = segment:Create(self, 1*(math.pi/3)-segmentOffset, )
-  segments[2] = segment:Create(self, 2*(math.pi/3)-segmentOffset, {r = 255,g = 255,b = 255})
-  segments[3] = segment:Create(self, 3*(math.pi/3)-segmentOffset, {r = 0,g = 255,b =  0})
-  segments[4] = segment:Create(self, 4*(math.pi/3)-segmentOffset, {r = 255,g = 255,b = 255})
-  segments[5] = segment:Create(self, 5*(math.pi/3)-segmentOffset, {r = 0,g = 0,b = 255})
-  segments[6] = segment:Create(self, 6*(math.pi/3)-segmentOffset, {r = 0,g = 0,b = 255})
+  segments[1] = segment:Create(self, 1*(math.pi/3)-segmentOffset, 'weapon')
+  segments[2] = segment:Create(self, 2*(math.pi/3)-segmentOffset, 'weapon')
+  segments[3] = segment:Create(self, 3*(math.pi/3)-segmentOffset, 'weapon')
+  segments[4] = segment:Create(self, 4*(math.pi/3)-segmentOffset, 'special')
+  segments[5] = segment:Create(self, 5*(math.pi/3)-segmentOffset, 'special')
+  segments[6] = segment:Create(self, 6*(math.pi/3)-segmentOffset, 'special')
   return segments
 end
 

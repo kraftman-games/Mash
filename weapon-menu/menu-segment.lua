@@ -7,6 +7,7 @@ local lg = love.graphics
 segment.__index = segment
 
 function segment:Draw()
+
   if self.enabled then
     lg.setColor(self.color.r, self.color.g, self.color.b)
   end
@@ -20,7 +21,6 @@ function segment:Draw()
     lg.arc('line', self.menu:GetX(), self.menu:GetY(), 45, startAng, endAng)
     lg.setColor(self.color.r-offset*2, self.color.g-offset*2, self.color.b-offset*2)
     lg.arc('line', self.menu:GetX(), self.menu:GetY(), 50, startAng, endAng)
-    self:DrawActive()
   end
 end
 
@@ -29,18 +29,17 @@ function segment:SetActive(bool)
 end
 
 function segment:Activate()
-  self.onActivate(player)
-
+  -- self.onActivate(player)
 end 
 
-function segment:Create(menu, angle, color, onActivate)
+function segment:Create(menu, angle, type)
   local mySegment = setmetatable({}, segment)
+  mySegment.color = {r = 100, g = 100, b = 100}
   mySegment.angle = angle
   mySegment.enabled = true
-  mySegment.color = color
   mySegment.menu = menu
   mySegment.active = true
-  mySegment.onActivate = onActivate
+  mySegment.type = type
   return mySegment
 end
 

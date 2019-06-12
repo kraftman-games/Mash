@@ -54,12 +54,12 @@ function input:RemoveController(controller)
   self.controllers[controller.id] = nil
 end
 
-function input:gamepadpressed(joystick, button)
+function input:GamepadPressed(joystick, button)
   -- print('gamepad pressed:')
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
   if button == 'leftstick' and not controller.players.player1 then
-      AddPlayer(controller, 'player1')
+      self:AddPlayer(controller, 'player1')
   end
   
   if button == 'rightstick' and not controller.players.player2 then
@@ -72,7 +72,7 @@ function input:gamepadpressed(joystick, button)
   end
 end
 
-function input:gamepadreleased(joystick, button)
+function input:GamepadReleased(joystick, button)
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
   
@@ -82,7 +82,7 @@ function input:gamepadreleased(joystick, button)
   end
 end
 
-function input:gamepadaxis(joystick, axis, value)
+function input:GamepadAxis(joystick, axis, value)
   print('gamepad axis:', joystick, axis, value)
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
@@ -131,7 +131,7 @@ function input:gamepadaxis(joystick, axis, value)
   end
 end
 
-function input:update(dt)
+function input:Update(dt)
   local joysticks = love.joystick.getJoysticks()
   -- add new controllers
   for i, joystick in ipairs(joysticks) do
@@ -143,7 +143,7 @@ function input:update(dt)
   end
 end
 
-function input:draw()
+function input:Draw()
   local joysticks = love.joystick.getJoysticks()
   for i, joystick in ipairs(joysticks) do
       love.graphics.print('name:'..joystick:getName(), 10, i * 20)
@@ -151,7 +151,7 @@ function input:draw()
   end 
 end
 
-function input:create(world)
+function input:Create(world)
   local inp = setmetatable({}, input)
   inp.world = world
   inp.controllers = {}
@@ -159,7 +159,7 @@ function input:create(world)
   return inp
 end
 
-function input:keypressed()
+function input:KeyPressed()
 
 end
 
