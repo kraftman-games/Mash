@@ -47,8 +47,8 @@ function player:GetNewCoords(dt)
 end
 
 function player:SetNewCoords(coords)
-    self.x = coords.x
-    self.y = coords.y
+  self.x = coords.x
+  self.y = coords.y
 end
 
 function player:ReverseVelocities()
@@ -172,7 +172,7 @@ function player:SecondaryFire()
 end
 
 function player:ButtonDown(button)
-  -- print('button down:', button, self.vx)
+  print('button down:', button, self.vx, ' trigger: ', self.trigger)
   if button == self.trigger then
       self:StartFiring()
   elseif button == self.stick then

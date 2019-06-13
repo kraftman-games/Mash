@@ -1,7 +1,9 @@
 weapon menu:
-- add all segments by default
-- support populating segments
+- fix/swap out collision lib
+- convert bullets to weapons that fire bullets
+- support removing assigned skill from segments
 - support limitted amounts (e.g. bomb pickups)
+
 - add reset timers with display
 
 Tank moves:

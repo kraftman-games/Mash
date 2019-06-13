@@ -5,6 +5,12 @@ local function ObjectsCollide(first, second, firstCoords, secondCoords)
   if (first.type == 'bullet' and second.type == 'bullet') then
     return false
   end
+  if (first.owner and first.owner == second) then
+    return false
+  end
+  if (second.owner and second.owner == first) then
+    return false
+  end
   
   totalRad = first:GetRadius() + second:GetRadius()
   local newRad = math.sqrt((firstCoords.x - secondCoords.x)^2 + (firstCoords.y - secondCoords.y)^2)
@@ -18,12 +24,12 @@ M.__index = M
 local Input = require 'input'
 
 function M:RemoveOOB()
-    for k,v in pairs(self.collidables) do
-        if (v.x < - self.bufferWidth or v.x > self.width + self.bufferWidth) or
-           (v.y < - self.bufferWidth or v.y > self.height + self.bufferWidth) then
-            v:RemoveOOB()
-        end
+  for k,v in pairs(self.collidables) do
+    if (v.x < - self.bufferWidth or v.x > self.width + self.bufferWidth) or
+        (v.y < - self.bufferWidth or v.y > self.height + self.bufferWidth) then
+        v:RemoveOOB()
     end
+  end
 end
 
 function M:ResolveCollisions(dt)
@@ -126,6 +132,7 @@ function M:GamepadReleased(joystick, button)
 end
 
 function M:GamepadPressed(joystick, button)
+  print(joystick, button)
   self.inputHandler:GamepadPressed(joystick, button)
 end
 

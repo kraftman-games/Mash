@@ -55,7 +55,7 @@ function input:RemoveController(controller)
 end
 
 function input:GamepadPressed(joystick, button)
-  -- print('gamepad pressed:')
+  print('gamepad pressed:', joystick, button)
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
   if button == 'leftstick' and not controller.players.player1 then
@@ -65,6 +65,7 @@ function input:GamepadPressed(joystick, button)
   if button == 'rightstick' and not controller.players.player2 then
       self:AddPlayer(controller, 'player2')
   end
+  print('player to update:', controller.id..button)
   local playerToUpdate = self.buttonListeners[controller.id..button]
   if playerToUpdate then
       playerToUpdate:ButtonDown(button)
@@ -103,6 +104,17 @@ function input:GamepadAxis(joystick, axis, value)
 
   end
   if axis == 'triggerleft' then
+    local playerToUpdate = self.buttonListeners[controller.id..axis]
+    if playerToUpdate then
+      if value > 0.5 then
+        playerToUpdate:ButtonDown(axis)
+      else  
+        playerToUpdate:ButtonUp(axis)
+      end
+      -- print('gamepad pressed', button)
+    end
+  end
+  if axis == 'triggerright' then
     local playerToUpdate = self.buttonListeners[controller.id..axis]
     if playerToUpdate then
       if value > 0.5 then
