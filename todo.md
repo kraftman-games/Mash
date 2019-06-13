@@ -1,5 +1,5 @@
 weapon menu:
-- fix/swap out collision lib
+
 - convert bullets to weapons that fire bullets
 - support removing assigned skill from segments
 - support limitted amounts (e.g. bomb pickups)

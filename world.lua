@@ -2,6 +2,8 @@
 
 
 local function ObjectsCollide(first, second, firstCoords, secondCoords)
+  --print(first.type, second.type)
+  
   if (first.type == 'bullet' and second.type == 'bullet') then
     return false
   end
@@ -67,8 +69,8 @@ function M:Update(dt)
     for k, player in pairs(self.players) do
         player:Update(dt)
     end
-    for k, player in pairs(self.projectiles) do
-        player:Update(dt)
+    for k, projectile in pairs(self.projectiles) do
+        projectile:Update(dt)
     end
     for k, comet in pairs(self.comets) do
         comet:Update(dt)

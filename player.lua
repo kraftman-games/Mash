@@ -34,7 +34,7 @@ function player:Update(dt)
   self.angle = math.atan2(self.opp, self.adj)
 
   if self.firing then
-      self:Fire(dt)
+    self.weapon:Fire(dt)
   end
 
 end
@@ -54,22 +54,6 @@ end
 function player:ReverseVelocities()
   self.vx = -self.vx
   self.vy = -self.vy
-end
-
-
-function player:Fire(dt)
-  print('firing')
-  self.lastFired = self.lastFired + dt
-  local fireRate = self.weapon:GetFireRate()
-  fireRate = fireRate * self.fireRate
-  -- print(self.lastFired, fireRate)
-  if self.lastFired > fireRate then
-    -- print('firing')
-    self.lastFired = 0
-    local projectile = self.weapon:Create(self.world, self.x, self.y, self.angle)
-    projectile:SetPlayer(self)
-    self.world:AddProjectile(projectile)
-  end
 end
 
 function player:DrawShip()
@@ -219,9 +203,6 @@ function player:Create(world, x, y, joystick, axis )
     acceleration = 20,
     shield = 0,
     shieldwidth = 0.5,
-    lastFired = 0,
-    defaultWeapon = spudGun,
-    weapon = spudGun,
     fireRate = 0.1,
     radius = 5,
     health = 200,
@@ -230,8 +211,11 @@ function player:Create(world, x, y, joystick, axis )
   }
   local p = setmetatable(defaults, player)
   p.weaponMenu = weaponMenu:Create(p)
-  p.weaponMenu:AddSkill(cannon:Create(world, x,y))
+  --p.weaponMenu:AddSkill(cannon:Create(world, x,y))
   p.lastInput = love.timer.getTime()
+  local can = cannon:Create(world, p)
+  p.defaultWeapon = can
+  p.weapon = can
   return p
 end
 

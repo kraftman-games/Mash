@@ -55,7 +55,7 @@ function input:RemoveController(controller)
 end
 
 function input:GamepadPressed(joystick, button)
-  print('gamepad pressed:', joystick, button)
+  --print('gamepad pressed:', joystick, button)
   self:AddController(joystick)
   local controller = self.controllers[joystick:getID()]
   if button == 'leftstick' and not controller.players.player1 then
@@ -65,7 +65,7 @@ function input:GamepadPressed(joystick, button)
   if button == 'rightstick' and not controller.players.player2 then
       self:AddPlayer(controller, 'player2')
   end
-  print('player to update:', controller.id..button)
+  --print('player to update:', controller.id..button)
   local playerToUpdate = self.buttonListeners[controller.id..button]
   if playerToUpdate then
       playerToUpdate:ButtonDown(button)
