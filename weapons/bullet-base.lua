@@ -29,7 +29,7 @@ end
 
 function bullet:Draw()
   lg.setColor(self.color.r, self.color.g, self.color.b)
-  lg.circle('fill', self.x, self.y, self.radius+20)
+  lg.circle('fill', self.x, self.y, self.radius)
 end
 
 function bullet:Collision()

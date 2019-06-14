@@ -1,84 +1,84 @@
 
 local lg = love.graphics
+local bulletBase = require 'weapons.bullet-base'
 
-local bullet = {
-    fireRate = 0.8
+local weapon = {
+    fireRate = 0.1
 }
 
-bullet.__index = bullet
+weapon.__index = weapon
 
-function bullet:Update(dt)
-    if self.destroyed then
-        self.world:RemoveProjectile(self)
-    end
+function weapon:GetCollisionDamage()
+  return self.radius
 end
 
-function bullet:GetNewCoords(dt)
-    return {
-        x = self.x + (self.vx * dt),
-        y = self.y + self.vy * dt
-    }
-end
-
-function bullet:SetNewCoords(coords)
-    self.x = coords.x
-    self.y = coords.y
-end
-
-function bullet:Draw()
-    lg.circle('line', self.x, self.y, self.radius)
-end
-
-function bullet:Collision()
-    self.destroyed = true
-end
-
-function bullet:GetRadius()
-    return self.radius
-end
-
-function bullet:GetFireRate()
-    return self.fireRate
-end
-
-function bullet:SetPlayer(player)
-    self.owner = player
-end
-
-function bullet:RemoveOOB()
-    self.world:RemoveProjectile(self)
-end
-
-function bullet:ReverseVelocities()
-    
-end
-
-function bullet:GetCollisionDamage()
-    return self.radius
-end
-
-local getSegment = function()
-    return {
-      color= {r = 255, g = 255, b = 255}
-    }
+function weapon:Activate(player)
+  if (player.weapon == self) then
+    player.weapon = player.defaultWeapon
+    return
   end
-  
-function bullet:Create(world, x, y)
+  player.weapon = self
+end
+
+function weapon:GetFireRate()
+  return self.fireRate
+end
+
+function weapon:Fire(dt)
+  self.lastFired = self.lastFired + dt
+  local fireRate = self:GetFireRate()
+  if self.lastFired > fireRate then
+    -- print('firing')
+    self.lastFired = 0
+    for k,create in pairs(self.bullets) do
+      local projectile = create(self)
+      self.world:AddProjectile(projectile)
+    end
+  end
+end
+
+local bulletTemplate = function(angle, size, damage, color)
+  return function (wep)
+    local defaults = {
+      world = wep.world,
+      x = wep.owner.x,
+      y = wep.owner.y,
+      owner = wep.owner,
+      vx = math.sin(angle)*30,
+      vy = math.cos(angle)*30,
+      collisionDamage = damage,
+      radius = size,
+      type = 'bullet',
+      color = {
+        r = color.r,
+        g = color.g,
+        b = color.b
+      }
+    }
+    local b = setmetatable(defaults, bulletBase)
+    
+    return b
+  end
+end
+ 
+function weapon:Create(world, player)
   local defaults = {
     world = world,
-    x = x - 10,
-    y = y,
-    vx = 0,
-    vy = -10,
-    collisionDamage = 20,
-    radius = 5,
-    type = 'bullet',
-    slot = weapon,
-    segment = getSegment()
+    owner = player,
+    type = 'weapon',
+    lastFired = 0,
+    bullets = {},
+    segmentColor = {
+      r = 0,
+      g = 255,
+      b = 0
+    }
   }
-  local b = setmetatable(defaults, bullet)
-
-  return b
+  local wep = setmetatable(defaults, weapon)
+  local color = {r = 255, g = 0, b = 20}
+  table.insert(wep.bullets, bulletTemplate(-3.141, 5, 10, color))
+  
+  return wep
 end
 
-return bullet
+return weapon

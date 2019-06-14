@@ -54,6 +54,81 @@ function input:RemoveController(controller)
   self.controllers[controller.id] = nil
 end
 
+local kb1 = {
+  getID = function() return 'kb1' end,
+  isConnected = function() return true end,
+  getGamepadAxis = function(self, axis)
+    if axis == 'leftx' then
+      if love.keyboard.isDown('a') then
+        return -1
+      elseif love.keyboard.isDown('d') then
+        return 1
+      else
+        return 0
+      end
+    end
+    
+    if axis == 'lefty' then
+      if love.keyboard.isDown('w') then
+        return -1
+      elseif love.keyboard.isDown('r') then
+        return 1
+      else
+        return 0
+      end
+    end
+    print(axis)
+    return 0
+  end
+}
+local kb2 = {
+  getID = function() return 'kb2' end
+}
+
+local keyboardMap = {
+  a = {
+    joystick = kb1,
+    action = 'SteerX',
+    value = -1,
+    playerID = 'player1'
+  },
+  d = {
+    joystick = kb1,
+    action = 'SteerX',
+    value = 1,
+    playerID = 'player2'
+  }
+}
+
+function input:KeyPressed(key)
+  local map = keyboardMap[key]
+  if not map then
+    return 
+  end
+  local joystick = map.joystick
+  self:AddController(joystick)
+  
+  local controller = self.controllers[joystick:getID()]
+  if map.playerID == 'player1' and not controller.players.player1 then
+    self:AddPlayer(controller, 'player1')
+  end
+  
+  if map.playerID == 'player2' and not controller.players.player1 then
+    self:AddPlayer(controller, 'player2')
+  end
+
+
+  local playerToUpdate = controller.players[map.playerID]
+  for k,v in pairs(playerToUpdate) do
+    print(k,v)
+  end
+  print(map.action)
+end
+
+function input:KeyReleased(key)
+
+end
+
 function input:GamepadPressed(joystick, button)
   --print('gamepad pressed:', joystick, button)
   self:AddController(joystick)
@@ -68,8 +143,8 @@ function input:GamepadPressed(joystick, button)
   --print('player to update:', controller.id..button)
   local playerToUpdate = self.buttonListeners[controller.id..button]
   if playerToUpdate then
-      playerToUpdate:ButtonDown(button)
-      -- print('gamepad pressed', button)
+    playerToUpdate:ButtonDown(button)
+    -- print('gamepad pressed', button)
   end
 end
 
@@ -89,18 +164,18 @@ function input:GamepadAxis(joystick, axis, value)
   local controller = self.controllers[joystick:getID()]
 
   if (axis == 'leftx' or axis == 'lefty') then
-      if not controller.players.player1 then
-          self:AddPlayer(controller, 'player1')
-      end
-      local playerToUpdate = self.buttonListeners[controller.id..axis]
-      if playerToUpdate then
-          if axis == 'leftx' then
-              -- print(value)
-              playerToUpdate:SteerX(value)
-          else
-              playerToUpdate:SteerY(value)
-          end
-      end
+    if not controller.players.player1 then
+      self:AddPlayer(controller, 'player1')
+    end
+    -- local playerToUpdate = self.buttonListeners[controller.id..axis]
+    -- if playerToUpdate then
+    --   if axis == 'leftx' then
+    --     -- print(value)
+    --     playerToUpdate:SteerX(value)
+    --   else
+    --     playerToUpdate:SteerY(value)
+    --   end
+    -- end
 
   end
   if axis == 'triggerleft' then
@@ -132,14 +207,14 @@ function input:GamepadAxis(joystick, axis, value)
           self:AddPlayer(controller, 'player2')
       end
       
-      local playerToUpdate = self.buttonListeners[controller.id..axis]
-      if playerToUpdate then
-          if axis == 'rightx' then
-              playerToUpdate:SteerX(value)
-          else
-              playerToUpdate:SteerY(value)
-          end
-      end
+      -- local playerToUpdate = self.buttonListeners[controller.id..axis]
+      -- if playerToUpdate then
+      --     if axis == 'rightx' then
+      --         playerToUpdate:SteerX(value)
+      --     else
+      --         playerToUpdate:SteerY(value)
+      --     end
+      -- end
   end
 end
 
@@ -169,10 +244,6 @@ function input:Create(world)
   inp.controllers = {}
   inp.buttonListeners = {}
   return inp
-end
-
-function input:KeyPressed()
-
 end
 
 

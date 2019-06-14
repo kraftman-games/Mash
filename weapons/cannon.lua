@@ -77,9 +77,9 @@ function weapon:Create(world, player)
   }
   local wep = setmetatable(defaults, weapon)
   local color = {r = 255, g = 0, b = 200}
-  table.insert(wep.bullets, bulletTemplate(-0.7, 1, 10, color))
+  table.insert(wep.bullets, bulletTemplate(-2.7, 5, 10, color))
    color = {r = 0, g = 255, b = 200}
-  table.insert(wep.bullets, bulletTemplate(0.7, 1, 10, color))
+  table.insert(wep.bullets, bulletTemplate(2.7, 5, 10, color))
   
   return wep
 end

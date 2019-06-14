@@ -211,11 +211,12 @@ function player:Create(world, x, y, joystick, axis )
   }
   local p = setmetatable(defaults, player)
   p.weaponMenu = weaponMenu:Create(p)
-  --p.weaponMenu:AddSkill(cannon:Create(world, x,y))
   p.lastInput = love.timer.getTime()
-  local can = cannon:Create(world, p)
+  local can = spudgun:Create(world, p)
   p.defaultWeapon = can
   p.weapon = can
+  
+  p.weaponMenu:AddSkill(cannon:Create(world, p))
   return p
 end
 

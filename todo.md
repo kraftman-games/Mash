@@ -1,6 +1,6 @@
 weapon menu:
 
-- convert bullets to weapons that fire bullets
+- fix input system
 - support removing assigned skill from segments
 - support limitted amounts (e.g. bomb pickups)
 
